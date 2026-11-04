@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "sample-light",
+  "name": "Sample Light (test only)",
+  "version": "0.0.1",
+  "description": "Throwaway second theme so you can test switching today",
+  "appearance": { "background": "#F4EFE6", "surface": "#FFFFFF", "primary": "#6B4EFF", "text": "#1B1B1B" },
+  "wallpaper": "wallpapers/home.webp",
+  "icons": {},
+  "layout": { "columns": 4, "dockEnabled": true }
+}
