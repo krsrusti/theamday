@@ -37,6 +37,7 @@ class LauncherActivity : Activity() {
     private var textColor = Color.WHITE
     private var columns = 4
     private var dockEnabled = true
+    private lateinit var wallpaperView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +69,16 @@ class LauncherActivity : Activity() {
         val root = FrameLayout(this).apply { fitsSystemWindows = true }
 
         homeLayer = FrameLayout(this)
+        wallpaperView = ImageView(this).apply {
+            scaleType = ImageView.ScaleType.CENTER_CROP
+        }
+        homeLayer.addView(
+            wallpaperView,
+            FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        )
         dockRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER; setPadding(dp(8), dp(8), dp(8), dp(8)) }
         homeLayer.addView(dockRow, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM).apply { setMargins(dp(12), 0, dp(12), dp(16)) })
         openDrawerBtn = TextView(this).apply {
@@ -79,9 +90,8 @@ class LauncherActivity : Activity() {
 
         drawerLayer = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; visibility = View.GONE; setPadding(dp(8), dp(16), dp(8), dp(8)) }
         grid = GridView(this).apply {
-        this.adapter = this@LauncherActivity.adapter
-        verticalSpacing = dp(12)
-        setSelector(android.graphics.drawable.ColorDrawable(Color.TRANSPARENT))
+            this.adapter = this@LauncherActivity.adapter
+            verticalSpacing = dp(12)
         }
         drawerLayer.addView(grid, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
 
@@ -92,6 +102,23 @@ class LauncherActivity : Activity() {
 
     private fun loadTheme() {
         val t = try { ThemeRepository.getActive(this) } catch (e: Exception) { null } ?: return
+
+        val dir = t.getString("dir")
+        val wallpaperPath = t.getString("wallpaper")
+
+        try {
+            assets.open("themes/$dir/$wallpaperPath").use { stream ->
+                wallpaperView.setImageDrawable(
+                    android.graphics.drawable.Drawable.createFromStream(
+                        stream,
+                        null
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("ThemeOS", "Wallpaper loading failed", e)
+        }
+
         try {
             val a = t.getJSONObject("appearance")
             bg = Color.parseColor(a.getString("background"))
@@ -136,7 +163,18 @@ class LauncherActivity : Activity() {
             setPadding(dp(4), dp(8), dp(4), dp(8))
             setOnClickListener { InstalledAppsRepository.launch(this@LauncherActivity, app); closeDrawer() }
         }
-        c.addView(ImageView(this).apply { setImageDrawable(app.icon) }, LinearLayout.LayoutParams(dp(48), dp(48)))
+        val themedIcon = ThemeRepository.iconForApp(
+            this,
+            app.packageName
+        )
+
+        c.addView(
+            ImageView(this).apply {
+                setImageDrawable(themedIcon ?: app.icon)
+                scaleType = ImageView.ScaleType.FIT_CENTER
+            },
+            LinearLayout.LayoutParams(dp(48), dp(48))
+        )
         if (showLabel) c.addView(TextView(this).apply {
             this.text = app.label; setTextColor(textColor); setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
             maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.END; gravity = Gravity.CENTER

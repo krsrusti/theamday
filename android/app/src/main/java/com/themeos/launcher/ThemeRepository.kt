@@ -1,5 +1,7 @@
 package com.themeos.launcher
 
+import android.graphics.drawable.Drawable
+import android.app.WallpaperManager
 import android.content.Context
 import android.graphics.Color
 import android.util.Log
@@ -50,7 +52,25 @@ object ThemeRepository {
         for (i in 0 until themes.length()) {
             val t = themes.getJSONObject(i)
             if (t.getString("id") == themeId) {
-                ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString(KEY_ACTIVE, themeId).apply()
+                val wallpaperPath = t.getString("wallpaper")
+                val themeDir = t.getString("dir")
+
+                try {
+                    ctx.assets.open("themes/$themeDir/$wallpaperPath").use { stream ->
+                        WallpaperManager.getInstance(ctx).setStream(stream)
+                    }
+                } catch (e: Exception) {
+                    throw ThemeError(
+                        "WALLPAPER_APPLY_FAILED",
+                        e.message ?: "Could not apply wallpaper"
+                    )
+                }
+
+                ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                    .edit()
+                    .putString(KEY_ACTIVE, themeId)
+                    .apply()
+
                 return t
             }
         }
@@ -68,5 +88,29 @@ object ThemeRepository {
         if (l.getInt("columns") !in 3..6) throw ThemeError("SCHEMA", "columns must be 3-6")
         val wp = j.getString("wallpaper")
         if (wp.contains("..") || wp.startsWith("/")) throw ThemeError("PATH", "Unsafe path")
+    }
+
+    fun iconForApp(ctx: Context, packageName: String): Drawable? {
+        val theme = getActive(ctx) ?: return null
+        val icons = theme.optJSONObject("icons") ?: return null
+        val relativePath = icons.optString(packageName)
+
+        if (
+            relativePath.isBlank() ||
+            relativePath.startsWith("/") ||
+            relativePath.contains("..")
+        ) return null
+
+        val dir = theme.optString("dir")
+        if (dir.isBlank()) return null
+
+        return try {
+            ctx.assets.open("themes/$dir/$relativePath").use {
+                Drawable.createFromStream(it, null)
+            }
+        } catch (e: Exception) {
+            Log.w("ThemeOS", "Unable to load themed icon: $packageName", e)
+            null
+        }
     }
 }
