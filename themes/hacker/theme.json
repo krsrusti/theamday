@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "schemaVersion": 1,
   "id": "hacker",
@@ -17,4 +18,16 @@
     "com.google.android.apps.maps": "icons/map.webp"
   },
   "layout": { "columns": 5, "dockEnabled": true }
+=======
+{
+  "schemaVersion": 1,
+  "id": "Hacker",
+  "name": "Hacker",
+  "version": "1.0.0",
+  "description": "PLACEHOLDER until Person 1 delivers the real package",
+  "appearance": { "background": "#080808", "surface": "#151515", "primary": "#D6B878", "text": "#FFFFFF" },
+  "wallpaper": "wallpapers/home.webp",
+  "icons": { "com.android.chrome": "icons/chrome.webp" },
+  "layout": { "columns": 5, "dockEnabled": true }
+>>>>>>> origin/main
 }
