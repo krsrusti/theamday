@@ -1,11 +1,20 @@
 {
   "schemaVersion": 1,
-  "id": "Hacker",
+  "id": "hacker",
   "name": "Hacker",
   "version": "1.0.0",
   "description": "PLACEHOLDER until Person 1 delivers the real package",
   "appearance": { "background": "#080808", "surface": "#151515", "primary": "#D6B878", "text": "#FFFFFF" },
   "wallpaper": "wallpapers/home.webp",
-  "icons": { "com.android.chrome": "icons/chrome.webp" },
+    "icons": {
+    "com.android.contacts": "icons/phone.webp",
+    "com.android.mms": "icons/messages.webp",
+    "com.android.camera": "icons/camera.webp",
+    "com.android.settings": "icons/settings.webp",
+    "com.android.chrome": "icons/chrome.webp",
+    "com.miui.gallery": "icons/images.webp",
+    "com.google.android.youtube": "icons/youtube.webp",
+    "com.google.android.apps.maps": "icons/map.webp"
+  },
   "layout": { "columns": 5, "dockEnabled": true }
 }
