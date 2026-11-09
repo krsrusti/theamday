@@ -6,6 +6,15 @@
   "description": "Throwaway second theme so you can test switching today",
   "appearance": { "background": "#F4EFE6", "surface": "#FFFFFF", "primary": "#6B4EFF", "text": "#1B1B1B" },
   "wallpaper": "wallpapers/home.webp",
-  "icons": {},
+  "icons": {
+    "com.android.contacts": "icons/phone.webp",
+    "com.android.mms": "icons/messages.webp",
+    "com.android.camera": "icons/camera.webp",
+    "com.android.settings": "icons/settings.webp",
+    "com.android.chrome": "icons/chrome.webp",
+    "com.miui.gallery": "icons/images.webp",
+    "com.google.android.youtube": "icons/youtube.webp",
+    "com.google.android.apps.maps": "icons/map.webp"
+  },
   "layout": { "columns": 4, "dockEnabled": true }
 }
